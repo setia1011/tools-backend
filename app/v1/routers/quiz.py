@@ -8,13 +8,22 @@ from app.v1.services import quiz as serv_quiz
 router = APIRouter()
 
 
-@router.get('/category', response_model=list[quiz_schema.CategoryDetail], description='Get all categories')
+@router.get('/category',
+    responses={200: {'model': list[quiz_schema.CategoryDetail]}, 422: {'model': schema_error.HTTPError}}, 
+    description='Get all categories')
 async def category(db: Session = Depends(db_session)):
-    d_categories = serv_quiz.category_all(db=db)
-    return d_categories
+    try:
+        d_categories = serv_quiz.category_all(db=db)
+        return d_categories
+    except Exception:
+        raise HTTPException(status_code=422, detail='Failed')
+    finally:
+        db.close()
 
 
-@router.post('/category', response_model=quiz_schema.CategoryDetail, description='Create category')
+@router.post('/category', 
+    responses={200: {'model': quiz_schema.CategoryDetail}, 422: {'model': schema_error.HTTPError}},
+    description='Create category')
 async def category(t: quiz_schema.CategoryCreate, db: Session = Depends(db_session)):
     try:
         d_category = serv_quiz.category_create(
@@ -27,25 +36,27 @@ async def category(t: quiz_schema.CategoryCreate, db: Session = Depends(db_sessi
         db.refresh(d_category)
         return d_category
     except Exception:
-        raise
+        raise HTTPException(status_code=422, detail='Failed')
     finally:
         db.close()
 
 
-@router.get('/session', response_model=list[quiz_schema.SessionDetail], description='Get all seasons')
+@router.get('/session', 
+    responses={200: {'model': list[quiz_schema.SessionDetail]}, 422: {'model': schema_error.HTTPError}}, 
+    description='Get all seasons')
 async def session(db: Session = Depends(db_session)):
-    d_sessions = serv_quiz.session_all(db=db)
-    return d_sessions
+    try:
+        d_sessions = serv_quiz.session_all(db=db)
+        return d_sessions
+    except Exception:
+        raise HTTPException(status_code=422, detail='Failed')
+    finally:
+        db.close()
 
 
-# @router.get('/session-w')
-# async def session_w(db: Session = Depends(db_session)):
-#     db_sessions = serv_quiz.session_all(db=db)
-#     return db_sessions
-
-
-
-@router.post('/session', response_model=quiz_schema.SessionDetail, description='Create season')
+@router.post('/session', 
+    responses={200: {'model': quiz_schema.SessionDetail}, 422: {'model': schema_error.HTTPError}},
+    description='Create season')
 async def session(t: quiz_schema.SessionCreate, db: Session = Depends(db_session)):
     try:
         d_session = serv_quiz.session_create(
@@ -58,12 +69,14 @@ async def session(t: quiz_schema.SessionCreate, db: Session = Depends(db_session
         db.refresh(d_session)
         return d_session
     except Exception:
-        raise
+        raise HTTPException(status_code=422, detail='Failed')
     finally:
         db.close()
 
 
-@router.post('/question', response_model=quiz_schema.QuestionDetail, description='Create question')
+@router.post('/question', 
+    responses={200: {'model': quiz_schema.QuestionDetail}, 422: {'model': schema_error.HTTPError}},
+    description='Create question')
 async def question(t: quiz_schema.QuestionCreate, db: Session = Depends(db_session)):
     try:
         q_question = serv_quiz.question_create(
@@ -76,12 +89,14 @@ async def question(t: quiz_schema.QuestionCreate, db: Session = Depends(db_sessi
         db.refresh(q_question)
         return q_question
     except Exception:
-        raise
+        raise HTTPException(status_code=422, detail='Failed')
     finally:
         db.close()
 
 
-@router.post('/option', response_model=quiz_schema.OptionDetail, description='Create option')
+@router.post('/option', 
+    responses={200: {'model': quiz_schema.OptionDetail}, 422: {'model': schema_error.HTTPError}},
+    description='Create option')
 async def option(t: quiz_schema.OptionCreate, db: Session = Depends(db_session)):
     try:
         q_option = serv_quiz.option_create(
@@ -94,12 +109,14 @@ async def option(t: quiz_schema.OptionCreate, db: Session = Depends(db_session))
         db.refresh(q_option)
         return q_option
     except Exception:
-        raise
+        raise HTTPException(status_code=422, detail='Failed')
     finally:
         db.close()
 
 
-@router.post('/answer', response_model=quiz_schema.AnswerDetail, description='Create answer')
+@router.post('/answer',  
+    responses={200: {'model': quiz_schema.AnswerDetail}, 422: {'model': schema_error.HTTPError}},
+    description='Create answer')
 async def answer(t: quiz_schema.AnswerCreate, db: Session = Depends(db_session)):
     try:
         q_answer = serv_quiz.answer_create(
@@ -112,7 +129,7 @@ async def answer(t: quiz_schema.AnswerCreate, db: Session = Depends(db_session))
         db.refresh(q_answer)
         return q_answer
     except Exception:
-        raise
+        raise HTTPException(status_code=422, detail='Failed')
     finally:
         db.close()
 
@@ -137,7 +154,9 @@ async def ques(t: quiz_schema.Ques, db: Session = Depends(db_session)):
         db.close()
 
 
-@router.post('/question-by-session', response_model=list[quiz_schema.QuestionBySessionDetail], description='Get questions by session')
+@router.post('/question-by-session', 
+    responses={200: {"model": list[quiz_schema.QuestionBySessionDetail]}, 422: {"model": schema_error.HTTPError}}, 
+    description='Get questions by session')
 async def question_by_session(t: quiz_schema.QuestionBySession, db: Session = Depends(db_session)):
     try:
         q_questions = serv_quiz.question_by_session(
@@ -146,17 +165,19 @@ async def question_by_session(t: quiz_schema.QuestionBySession, db: Session = De
         )
         return q_questions
     except Exception:
-        raise
+        raise HTTPException(status_code=422, detail='Failed')
     finally:
         db.close()
 
 
-@router.post('/answer-single', response_model=list[quiz_schema.AnswerDetail], description='Check an answer of a question')
+@router.post('/answer-single', 
+    responses={200: {"model": list[quiz_schema.AnswerDetail]}, 422: {"model": schema_error.HTTPError}}, 
+    description='Check an answer of a question')
 async def answer_single(t: quiz_schema.AnswerSingle, db: Session = Depends(db_session)):
     try:
         d_answers = serv_quiz.answer_single(question_id=t.question_id, db=db)
         return d_answers
     except Exception:
-        raise
+        raise HTTPException(status_code=422, detail='Failed')
     finally:
         db.close()

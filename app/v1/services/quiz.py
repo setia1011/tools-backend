@@ -20,7 +20,8 @@ def category_create(
 
 
 def session_all(db: Session = Depends):
-    d_sessions = db.query(QuesSession).all()
+    # d_sessions = db.query(QuesSession).all()
+    d_sessions = db.query(QuesSession).join(Ques, Ques.session_id==QuesSession.id).all()
     return d_sessions
 
 
@@ -81,10 +82,16 @@ def question_by_session(session_id: int, db: Session = Depends):
     ct = 0
     if d_questions:
         for i in d_questions:
-            d_options = db.query(QuesOption).filter(QuesOption.question_id == i.question_id).all()
-            d_questions[ct].__setattr__("ref_options", d_options)
             d_category = db.query(QuesCategory).filter(QuesCategory.id == i.ref_question.category_id).first()
             d_questions[ct].__setattr__("ref_category", d_category)
+            d_options = db.query(QuesOption).filter(QuesOption.question_id == i.question_id).all()
+            d_questions[ct].__setattr__("ref_options", d_options)
+
+            # if d_questions:
+            #     d_questions[ct].__setattr__("ref_options", d_options)
+            # else:
+            #     d_questions.remove(ct)
+            
             # include answers, but better hide it for now
             # d_answers = db.query(QuesAnswer).filter(QuesAnswer.question_id==i.question_id).all()
             # d_questions[ct].__setattr__("ref_answers", d_answers)
