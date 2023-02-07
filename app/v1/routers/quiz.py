@@ -7,13 +7,13 @@ from app.v1.services import quiz as serv_quiz
 router = APIRouter()
 
 
-@router.get('/category', response_model=list[quiz_schema.CategoryDetail])
+@router.get('/category', response_model=list[quiz_schema.CategoryDetail], description='Get all categories')
 async def category(db: Session = Depends(db_session)):
     d_categories = serv_quiz.category_all(db=db)
     return d_categories
 
 
-@router.post('/category', response_model=quiz_schema.CategoryDetail)
+@router.post('/category', response_model=quiz_schema.CategoryDetail, description='Create category')
 async def category(t: quiz_schema.CategoryCreate, db: Session = Depends(db_session)):
     try:
         d_category = serv_quiz.category_create(
@@ -31,13 +31,13 @@ async def category(t: quiz_schema.CategoryCreate, db: Session = Depends(db_sessi
         db.close()
 
 
-@router.get('/session', response_model=list[quiz_schema.SessionDetail])
+@router.get('/session', response_model=list[quiz_schema.SessionDetail], description='Get all seasons')
 async def session(db: Session = Depends(db_session)):
     d_sessions = serv_quiz.session_all(db=db)
     return d_sessions
 
 
-@router.post('/session', response_model=quiz_schema.SessionDetail)
+@router.post('/session', response_model=quiz_schema.SessionDetail, description='Create season')
 async def session(t: quiz_schema.SessionCreate, db: Session = Depends(db_session)):
     try:
         d_session = serv_quiz.session_create(
@@ -55,7 +55,7 @@ async def session(t: quiz_schema.SessionCreate, db: Session = Depends(db_session
         db.close()
 
 
-@router.post('/question', response_model=quiz_schema.QuestionDetail)
+@router.post('/question', response_model=quiz_schema.QuestionDetail, description='Create question')
 async def question(t: quiz_schema.QuestionCreate, db: Session = Depends(db_session)):
     try:
         q_question = serv_quiz.question_create(
@@ -73,7 +73,7 @@ async def question(t: quiz_schema.QuestionCreate, db: Session = Depends(db_sessi
         db.close()
 
 
-@router.post('/option', response_model=quiz_schema.OptionDetail)
+@router.post('/option', response_model=quiz_schema.OptionDetail, description='Create option')
 async def option(t: quiz_schema.OptionCreate, db: Session = Depends(db_session)):
     try:
         q_option = serv_quiz.option_create(
@@ -91,7 +91,7 @@ async def option(t: quiz_schema.OptionCreate, db: Session = Depends(db_session))
         db.close()
 
 
-@router.post('/answer', response_model=quiz_schema.AnswerDetail)
+@router.post('/answer', response_model=quiz_schema.AnswerDetail, description='Create answer')
 async def answer(t: quiz_schema.AnswerCreate, db: Session = Depends(db_session)):
     try:
         q_answer = serv_quiz.answer_create(
@@ -109,7 +109,7 @@ async def answer(t: quiz_schema.AnswerCreate, db: Session = Depends(db_session))
         db.close()
 
 
-@router.post('/ques', response_model=quiz_schema.Ques)
+@router.post('/ques', response_model=quiz_schema.Ques, description='Assign question to session')
 async def ques(t: quiz_schema.Ques, db: Session = Depends(db_session)):
     try:
         q_ques = serv_quiz.ques_create(
@@ -127,7 +127,7 @@ async def ques(t: quiz_schema.Ques, db: Session = Depends(db_session)):
         db.close()
 
 
-@router.post('/question-by-session', response_model=list[quiz_schema.QuestionBySessionDetail])
+@router.post('/question-by-session', response_model=list[quiz_schema.QuestionBySessionDetail], description='Get questions by session')
 async def question_by_session(t: quiz_schema.QuestionBySession, db: Session = Depends(db_session)):
     try:
         q_questions = serv_quiz.question_by_session(
@@ -141,7 +141,7 @@ async def question_by_session(t: quiz_schema.QuestionBySession, db: Session = De
         db.close()
 
 
-@router.post('/answer-single', response_model=list[quiz_schema.AnswerDetail])
+@router.post('/answer-single', response_model=list[quiz_schema.AnswerDetail], description='Check an answer of a question')
 async def answer_single(t: quiz_schema.AnswerSingle, db: Session = Depends(db_session)):
     try:
         d_answers = serv_quiz.answer_single(question_id=t.question_id, db=db)
