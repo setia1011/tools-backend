@@ -56,8 +56,20 @@ def answer_create(question_id: int, answer: str, db: Session = Depends):
 
 
 def ques_create(session_id: int, question_id: int, db: Session = Depends):
-    d_ques = Ques(session_id= session_id, question_id=question_id)
-    return d_ques
+    exists = db.query(Ques).filter(Ques.session_id==session_id).filter(Ques.question_id==question_id).all()
+    if exists:
+        return "Question already exists"
+    else:
+        valid = db.query(QuesQuestion).\
+        filter(QuesQuestion.id==question_id).\
+            options(selectinload(QuesQuestion.ref_option)).\
+                options(selectinload(QuesQuestion.ref_answer)).first()
+
+        if (valid.ref_option and valid.ref_answer):
+            d_ques = Ques(session_id= session_id, question_id=question_id)
+            return d_ques
+        else:
+            return "Question doesn't valid"
 
 
 def question_by_session(session_id: int, db: Session = Depends):

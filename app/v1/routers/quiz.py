@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import db_session
+from app.v1.schemas import error as schema_error
 from app.v1.schemas import quiz as quiz_schema
 from app.v1.services import quiz as serv_quiz
 
@@ -35,6 +36,13 @@ async def category(t: quiz_schema.CategoryCreate, db: Session = Depends(db_sessi
 async def session(db: Session = Depends(db_session)):
     d_sessions = serv_quiz.session_all(db=db)
     return d_sessions
+
+
+# @router.get('/session-w')
+# async def session_w(db: Session = Depends(db_session)):
+#     db_sessions = serv_quiz.session_all(db=db)
+#     return db_sessions
+
 
 
 @router.post('/session', response_model=quiz_schema.SessionDetail, description='Create season')
@@ -109,7 +117,9 @@ async def answer(t: quiz_schema.AnswerCreate, db: Session = Depends(db_session))
         db.close()
 
 
-@router.post('/ques', response_model=quiz_schema.Ques, description='Assign question to session')
+@router.post('/ques', 
+    responses={200: {"model": quiz_schema.Ques}, 422: {"model": schema_error.HTTPError}}, 
+    description='Assign question to session')
 async def ques(t: quiz_schema.Ques, db: Session = Depends(db_session)):
     try:
         q_ques = serv_quiz.ques_create(
@@ -122,7 +132,7 @@ async def ques(t: quiz_schema.Ques, db: Session = Depends(db_session)):
         db.refresh(q_ques)
         return q_ques
     except Exception:
-        raise
+        raise HTTPException(status_code=422, detail=q_ques)
     finally:
         db.close()
 
