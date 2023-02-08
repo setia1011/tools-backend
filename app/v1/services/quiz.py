@@ -99,6 +99,26 @@ def question_by_session(session_id: int, db: Session = Depends):
     return d_questions
 
 
+def answers_by_session(session_id: int, db: Session = Depends):
+    d_questions = db.query(Ques).\
+        filter(Ques.session_id==session_id).\
+            options(selectinload(Ques.ref_session)).\
+            options(selectinload(Ques.ref_question)).all()
+
+    ct = 0
+    if d_questions:
+        for i in d_questions:
+            d_category = db.query(QuesCategory).filter(QuesCategory.id == i.ref_question.category_id).first()
+            d_questions[ct].__setattr__("ref_category", d_category)
+            d_options = db.query(QuesOption).filter(QuesOption.question_id == i.question_id).all()
+            d_questions[ct].__setattr__("ref_options", d_options)
+            # include answers, but better hide it for now
+            d_answers = db.query(QuesAnswer).filter(QuesAnswer.question_id==i.question_id).all()
+            d_questions[ct].__setattr__("ref_answers", d_answers)
+            ct += 1
+    return d_questions
+
+
 def answer_single(question_id: int, db: Session = Depends):
     d_answers = db.query(QuesAnswer).filter(QuesAnswer.question_id==question_id).all()
     return d_answers

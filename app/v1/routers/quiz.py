@@ -134,6 +134,22 @@ async def answer(t: quiz_schema.AnswerCreate, db: Session = Depends(db_session))
         db.close()
 
 
+@router.post('/answers-by-session',  
+    responses={200: {'model': quiz_schema.QuestionBySessionDetail}, 422: {'model': schema_error.HTTPError}},
+    description='Create answer')
+async def answers_by_session(t: quiz_schema.QuestionBySession, db: Session = Depends(db_session)):
+    try:
+        q_questions = serv_quiz.answers_by_session(
+            session_id=t.session_id,
+            db=db
+        )
+        return q_questions
+    except Exception:
+        raise HTTPException(status_code=422, detail='Failed')
+    finally:
+        db.close()
+
+
 @router.post('/ques', 
     responses={200: {"model": quiz_schema.Ques}, 422: {"model": schema_error.HTTPError}}, 
     description='Assign question to session')
