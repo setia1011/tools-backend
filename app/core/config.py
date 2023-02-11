@@ -1,7 +1,7 @@
 
 from typing import Any, Dict, List, Optional, Union
-
 from pydantic import AnyHttpUrl, BaseSettings, validator
+import os
 
 
 class Settings(BaseSettings):
@@ -10,6 +10,20 @@ class Settings(BaseSettings):
         # "http://localhost",
         # "http://localhost:8080"
     ]
+
+    ROOT_PATH = os.path.abspath(os.path.curdir)
+    CORE_PATH = os.path.abspath(os.path.dirname(__file__))
+
+    SMTP_USERNAME: str = None
+    SMTP_PASSWORD: str = None
+    SMTP_HOST: str = None
+    SMTP_PORT: int = None
+
+    JWT_SECRET: str = None
+    JWT_ALGORITHM: str = None
+
+    # 60 minutes * 24 hours * 8 days = 8 days
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:

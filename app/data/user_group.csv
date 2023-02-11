@@ -1,0 +1,5 @@
+"group_name","group_description"
+"superuser","granted all privileges"
+"manager","manage all employees"
+"admin","manage some specific jobs"
+"client","client subscriber"
