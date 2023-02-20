@@ -112,8 +112,39 @@ class UserIdType(BaseModel):
 
 
 class UserDetailOut(User):
-    r_user_group: Optional[UserGroup]
-    r_user_id_type: Optional[UserIdType]
+    ref_user_group: Optional[UserGroup]
+    ref_user_id_type: Optional[UserIdType]
+
+    class Config:
+        orm_mode = True
+
+# UserInfo
+class UserInfoGroup(BaseModel):
+    group_description: Optional[str]
+    group_name: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class UserInfoIdType(BaseModel):
+    id_type: Optional[str]
+    id_description: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class UserInfo(BaseModel):
+    username: Optional[str]
+    email: Optional[str]
+    address: Optional[str]
+    name: Optional[str]
+    status: Optional[str]
+    id_number: Optional[str]
+    phone: Optional[str]
+    ref_user_group: Optional[UserInfoGroup]
+    ref_user_id_type: Optional[UserInfoIdType]
 
     class Config:
         orm_mode = True

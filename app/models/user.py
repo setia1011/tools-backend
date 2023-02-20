@@ -25,5 +25,5 @@ class User(Base):
     editor = Column(Integer)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    r_user_group = relationship('RefUserGroup', backref='user')
-    r_user_id_type = relationship('RefUserIdType', backref='user')
+    ref_user_group = relationship('RefUserGroup', backref='user')
+    ref_user_id_type = relationship('RefUserIdType', backref='user')

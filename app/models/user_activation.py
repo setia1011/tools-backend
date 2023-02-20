@@ -14,4 +14,4 @@ class UserActivation(Base):
     activated_at = Column(DateTime(timezone=True), onupdate=func.now())
     status = Column(Enum('activated', 'inactivated'), nullable=False, server_default='inactivated')
 
-    r_user = relationship('User',  backref="user_activation")
+    ref_user = relationship('User',  backref="user_activation")

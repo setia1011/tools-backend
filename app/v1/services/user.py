@@ -26,7 +26,7 @@ def find_user_by_username(username: str, db: Session = Depends):
 
 def find_user_by_username_3(username: str, db: Session = Depends):
     dt_user = db.query(User).filter(User.username == username) \
-        .options(selectinload(User.r_user_group), selectinload(User.r_user_id_type)).first()
+        .options(selectinload(User.ref_user_group), selectinload(User.ref_user_id_type)).first()
     return dt_user
 
 
@@ -44,8 +44,8 @@ def update_password(
 
 
 def user_list(db: Session = Depends):
-    dt_user = db.query(User).options(selectinload(User.r_user_group),
-                                     selectinload(User.r_user_id_type)).all()
+    dt_user = db.query(User).options(selectinload(User.ref_user_group),
+                                     selectinload(User.ref_user_id_type)).all()
     return dt_user
 
 

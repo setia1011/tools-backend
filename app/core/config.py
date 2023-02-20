@@ -22,8 +22,9 @@ class Settings(BaseSettings):
     JWT_SECRET: str = None
     JWT_ALGORITHM: str = None
 
-    # 60 minutes * 24 hours * 8 days = 8 days
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+    # 60 minutes * 24 hours * 3 days = 3 days
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 3
+    # ACCESS_TOKEN_EXPIRE_MINUTES: int = 0
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:

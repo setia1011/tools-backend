@@ -223,6 +223,17 @@ async def password(
         db.close()
 
 
+@router.get("/user-info/", response_model=schema_user.UserInfo, response_model_by_alias=True, dependencies=[Depends(auth.default)], status_code=status.HTTP_200_OK)
+async def user_info(current_user: User = Depends(auth.get_current_active_user), db: Session = Depends(db_session)):
+    try:
+        dt_user = service_user.find_user_by_username_3(username=current_user.username, db=db)
+        return dt_user
+    except Exception:
+        raise
+    finally:
+        db.close()
+
+
 @router.get("/detail/", response_model=schema_user.UserDetailOut, response_model_by_alias=True, dependencies=[Depends(auth.default)], status_code=status.HTTP_200_OK)
 async def detail(current_user: User = Depends(auth.get_current_active_user), db: Session = Depends(db_session)):
     try:
